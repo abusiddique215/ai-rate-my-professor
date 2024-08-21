@@ -30,6 +30,7 @@ Before you begin, ensure you have met the following requirements:
 2. Install dependencies:
    ```
    npm install
+   npm install @mui/material @emotion/react @emotion/styled
    ```
 
 3. Create a `.env.local` file in the root directory and add the following environment variables:

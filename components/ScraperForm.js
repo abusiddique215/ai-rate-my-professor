@@ -26,6 +26,10 @@ export default function ScraperForm() {
         body: JSON.stringify({ url }),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to scrape data');
+      }
+
       const data = await response.json();
       setMessage(data.message);
     } catch (error) {
