@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Dr. John Smith",
+    "department": "Computer Science",
+    "overallRating": "4.5",
+    "reviews": [
+      {
+        "rating": "5.0",
+        "comment": "Excellent professor, very knowledgeable and helpful.",
+        "date": "2023-05-15",
+        "sentiment": "positive"
+      },
+      {
+        "rating": "4.0",
+        "comment": "Good lectures, but assignments can be challenging.",
+        "date": "2023-04-20",
+        "sentiment": "neutral"
+      },
+      {
+        "rating": "4.5",
+        "comment": "Very engaging class discussions.",
+        "date": "2023-03-10",
+        "sentiment": "positive"
+      }
+    ]
+  },
+  {
+    "name": "Dr. Jane Doe",
+    "department": "Mathematics",
+    "overallRating": "3.8",
+    "reviews": [
+      {
+        "rating": "3.5",
+        "comment": "Explains concepts well, but exams are tough.",
+        "date": "2023-05-01",
+        "sentiment": "neutral"
+      },
+      {
+        "rating": "4.0",
+        "comment": "Very helpful during office hours.",
+        "date": "2023-04-05",
+        "sentiment": "positive"
+      },
+      {
+        "rating": "2.5",
+        "comment": "Lectures can be confusing at times.",
+        "date": "2023-03-20",
+        "sentiment": "negative"
+      }
+    ]
+  }
+]
