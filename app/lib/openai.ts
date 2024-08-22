@@ -27,6 +27,9 @@ export async function generateChatResponse(messages: any[]) {
       messages: messages,
     });
     console.log('Chat response generated successfully');
+    if (!completion.choices[0].message.content) {
+      throw new Error('No content in OpenAI response');
+    }
     return completion.choices[0].message.content;
   } catch (error) {
     console.error('Error generating chat response:', error);

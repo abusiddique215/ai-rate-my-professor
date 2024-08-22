@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { TextField, Button, Box, Paper, Typography } from '@mui/material';
+import { TextField, Button, Box, Paper, Typography, Avatar } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import PersonIcon from '@mui/icons-material/Person';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -34,14 +36,23 @@ export default function ChatInterface() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: input }),
       });
+      
       if (!response.ok) {
-        throw new Error('Failed to get response from API');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
+      
       const data = await response.json();
-      setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: data.message }]);
+      if (data.message) {
+        setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: data.message }]);
+      } else {
+        console.error('Unexpected response format:', data);
+        setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+      }
     } catch (error) {
       console.error('Error:', error);
-      setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: 'Sorry, an error occurred. Please try again.' }]);
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: `Sorry, an error occurred: ${errorMessage}. Please try again.` }]);
     }
   };
 
@@ -69,11 +80,21 @@ export default function ChatInterface() {
       </Box>
       <Box sx={{ height: 400, p: 2, backgroundColor: '#ffffff', overflowY: 'auto' }}>
         {messages.map((message, index) => (
-          <Box key={index} sx={{ display: 'flex', justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start', mb: 2 }}>
+          <Box key={index} sx={{ 
+            display: 'flex', 
+            justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start', 
+            mb: 2,
+            alignItems: 'flex-end'
+          }}>
+            {message.role === 'assistant' && (
+              <Avatar sx={{ bgcolor: '#1976d2', mr: 1, mb: 1 }}>
+                <SmartToyIcon />
+              </Avatar>
+            )}
             <Paper 
               elevation={1} 
               sx={{ 
-                p: 1, 
+                p: 1.5, 
                 maxWidth: '70%', 
                 backgroundColor: message.role === 'user' ? '#e3f2fd' : '#f5f5f5',
                 borderRadius: message.role === 'user' ? '20px 20px 0 20px' : '20px 20px 20px 0'
@@ -81,6 +102,11 @@ export default function ChatInterface() {
             >
               <Typography variant="body1">{message.content}</Typography>
             </Paper>
+            {message.role === 'user' && (
+              <Avatar sx={{ bgcolor: '#4caf50', ml: 1, mb: 1 }}>
+                <PersonIcon />
+              </Avatar>
+            )}
           </Box>
         ))}
         <div ref={messagesEndRef} />
