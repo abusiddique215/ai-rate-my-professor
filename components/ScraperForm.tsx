@@ -1,12 +1,13 @@
+"use client";
 import { useState } from 'react';
-import { Box, TextField, Button, Typography } from '@mui/material';
+import { Box, TextField, Button, Typography, Alert } from '@mui/material';
 
 export default function ScraperForm() {
   const [url, setUrl] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
@@ -20,9 +21,7 @@ export default function ScraperForm() {
     try {
       const response = await fetch('/api/scrape', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
 
@@ -40,7 +39,7 @@ export default function ScraperForm() {
     }
   };
 
-  const isValidUrl = (string) => {
+  const isValidUrl = (string: string) => {
     try {
       new URL(string);
       return true;
@@ -50,10 +49,8 @@ export default function ScraperForm() {
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <Typography variant="h6" gutterBottom>
-        Scrape Professor Data
-      </Typography>
+    <Box>
+      <Typography variant="h5" gutterBottom>Scrape Professor Data</Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
@@ -68,9 +65,9 @@ export default function ScraperForm() {
         </Button>
       </form>
       {message && (
-        <Typography sx={{ mt: 2 }}>
+        <Alert severity={message.includes('error') ? 'error' : 'success'} sx={{ mt: 2 }}>
           {message}
-        </Typography>
+        </Alert>
       )}
     </Box>
   );

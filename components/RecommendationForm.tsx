@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react';
 import { TextField, Button, Box, Typography, Alert, CircularProgress, List, ListItem, ListItemText } from '@mui/material';
 
@@ -7,7 +8,7 @@ export default function RecommendationForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setRecommendation('');
@@ -22,9 +23,7 @@ export default function RecommendationForm() {
     try {
       const response = await fetch('/api/recommend', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ preferences }),
       });
 
@@ -37,17 +36,15 @@ export default function RecommendationForm() {
       setRecommendation(data.message);
     } catch (error) {
       console.error('Error:', error);
-      setError(error.message || 'Sorry, there was an error generating recommendations.');
+      setError('Sorry, there was an error generating recommendations.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <Typography variant="h6" gutterBottom>
-        Get Professor Recommendations
-      </Typography>
+    <Box>
+      <Typography variant="h5" gutterBottom>Get Professor Recommendations</Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
