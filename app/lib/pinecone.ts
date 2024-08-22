@@ -1,14 +1,13 @@
-import { PineconeClient } from "@pinecone-database/pinecone";
+import { Pinecone } from '@pinecone-database/pinecone';
 
-let pinecone: PineconeClient | null = null;
+let pineconeIndex: any = null;
 
-export async function getPineconeClient() {
-  if (!pinecone) {
-    pinecone = new PineconeClient();
-    await pinecone.init({
-      environment: process.env.PINECONE_ENVIRONMENT!,
-      apiKey: process.env.PINECONE_API_KEY!,
+export async function getPineconeIndex() {
+  if (!pineconeIndex) {
+    const pc = new Pinecone({
+      apiKey: process.env.PINECONE_API_KEY!
     });
+    pineconeIndex = pc.index(process.env.PINECONE_INDEX_NAME!);
   }
-  return pinecone;
+  return pineconeIndex;
 }

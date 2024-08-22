@@ -28,7 +28,21 @@ export default function ChatInterface() {
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInput('');
 
-    // TODO: Implement API call to process user input and get AI response
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to get response from API');
+      }
+      const data = await response.json();
+      setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: data.message }]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: 'Sorry, an error occurred. Please try again.' }]);
+    }
   };
 
   return (
