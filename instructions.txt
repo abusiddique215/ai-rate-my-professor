@@ -1,0 +1,118 @@
+# AI Rate My Professor Project Prompt
+
+## Project Overview
+Build a Retrieval-Augmented Generation (RAG) powered Rate My Professor AI Assistant using Next.js, OpenAI, and Pinecone. The assistant should provide relevant information about professors and courses based on user queries, leveraging the strengths of large language models and curated data sources.
+
+## Key Requirements
+
+### 1. Retrieval-Augmented Generation (RAG)
+The core of the application should be a RAG system that combines the vast knowledge of a large language model (OpenAI) with specific, up-to-date information stored in a vector database (Pinecone). This approach will allow the AI to understand and respond to complex queries while drawing upon a curated dataset for accuracy and relevance.
+
+The RAG system should work as follows:
+1. When a user submits a query, the system should extract the key elements of the question and create an embedding using OpenAI's language model.
+2. This embedding is then used to search the Pinecone vector database, retrieving the most relevant professor reviews and metadata.
+3. The retrieved information is then combined with the user's original query and passed back to the OpenAI model, which generates a contextual and informative response.
+4. The final response is then displayed to the user in the application's user interface.
+
+By integrating RAG, your AI assistant will be able to provide accurate and up-to-date information about professors and courses, drawing upon a rich dataset while maintaining the flexibility and natural language understanding of a large language model.
+
+### 2. Next.js Application
+Develop the Rate My Professor AI Assistant as a Next.js application, taking advantage of the framework's features for server-side rendering, file-based routing, and seamless integration with external services. This will ensure a fast, responsive, and scalable user experience.
+
+Some key benefits of using Next.js include:
+- Server-side rendering for improved initial load times and SEO
+- File-based routing for easy management of application pages and API routes
+- Seamless integration with external APIs (OpenAI, Pinecone) and other services
+- Built-in support for TypeScript, which can improve code quality and maintainability
+
+### 3. Vector Database (Pinecone)
+Set up a Pinecone vector database to store and efficiently retrieve professor review data. Implement techniques for processing the review data, creating embeddings, and populating the Pinecone index. This will form the foundation of the RAG system, allowing the AI assistant to quickly access relevant information when responding to user queries.
+
+Key tasks for the Pinecone integration include:
+- Defining the data schema and structure for professor reviews
+- Generating high-quality embeddings for each review using OpenAI's language model
+- Efficiently indexing the review data in Pinecone for fast vector search
+- Implementing techniques to update the Pinecone index as new data becomes available
+
+### 4. Language Model (OpenAI)
+Integrate the OpenAI language model to handle natural language processing and generation tasks, such as understanding user queries and generating relevant responses based on the information retrieved from Pinecone.
+
+Some ways to leverage the OpenAI model include:
+- Using the text-embedding-3-small model to create high-quality embeddings for user queries and professor reviews
+- Employing the gpt-3.5-turbo model for chat completion, generating contextual responses that combine the user's question with the Pinecone search results
+- Exploring options to fine-tune the language model on academic-specific data for more relevant and informative responses
+
+### 5. User Interface
+Develop a user-friendly chat-based interface using Material-UI components, allowing users to interact with the AI assistant and see the generated responses in real-time. The UI should provide a seamless and intuitive experience, making it easy for users to ask questions and understand the professor information provided by the assistant.
+
+Key UI features to consider:
+- Chat-style layout with user and assistant messages displayed in a scrollable area
+- Text input field and "Send" button for users to submit queries
+- Visually distinct styling for user and assistant messages (e.g., different background colors)
+- Responsive design that adapts to different screen sizes and devices
+
+### 6. Functionality Levels
+The Rate My Professor AI Assistant should be developed in four main stages, each building upon the previous level:
+
+1. **Level 1: Core Rate My Professor Support Agent**
+   - Implement the basic RAG system using the professor review data stored in Pinecone
+   - Develop the API route and backend logic to handle user queries, retrieve relevant information, and generate responses
+   - Create the frontend chat interface for users to interact with the AI assistant
+
+2. **Level 2: Web Scraping for Data Ingestion**
+   - Add functionality to allow users to submit links to professors' pages on Rate My Professor
+   - Develop a web scraper to automatically extract professor information and reviews from the provided links
+   - Integrate the scraped data into the Pinecone index, keeping the knowledge base up-to-date
+
+3. **Level 3: Advanced Search and Recommendation**
+   - Enhance the query processing to support more complex user inputs (e.g., filtering by subject, rating, keywords)
+   - Implement a personalized recommendation system that suggests professors based on user preferences and past interactions
+   - Optimize the retrieval and generation process for faster response times
+
+4. **Level 4: Sentiment Analysis and Trend Tracking**
+   - Integrate sentiment analysis on the professor reviews to categorize them as positive, negative, or neutral
+   - Track changes in professor ratings and review sentiments over time, identifying trends and surfacing insights in the UI
+   - Leverage the sentiment and trend data to provide more nuanced and contextual responses to user queries
+
+### 7. Technical Requirements
+In addition to the core functionality, your Rate My Professor AI Assistant should meet the following technical requirements:
+
+1. **Performance and Scalability**:
+   - Optimize the application for performance, ensuring fast load times and responsiveness
+   - Implement caching mechanisms to reduce API calls and improve response times
+   - Consider server-side rendering or static site generation for faster initial page loads
+
+2. **Error Handling and Logging**:
+   - Provide robust error handling throughout the application
+   - Implement comprehensive logging to facilitate debugging and monitoring
+
+3. **Security and Best Practices**:
+   - Ensure the application follows security best practices
+   - Regularly update dependencies and conduct security audits
+
+4. **Documentation**:
+   - Document the project setup, architecture, and deployment process
+   - Provide clear instructions for other developers to understand and maintain the codebase
+
+### 8. Bonus Features
+Consider implementing the following bonus features to enhance the functionality and user experience of your Rate My Professor AI Assistant:
+
+1. **Voice-based Interaction**:
+   - Implement a voice interface for the AI assistant, allowing users to interact using spoken commands
+   - Leverage browser-based speech recognition APIs or integrate with a third-party service
+
+2. **Multi-modal Information Retrieval**:
+   - Explore incorporating professor photos or other visual data into the information retrieval process
+   - Investigate techniques for combining textual and visual information to provide more comprehensive responses
+
+3. **Personalized Course Recommendations**:
+   - Develop a feature that provides personalized course recommendations based on the user's interests and past enrollments
+   - Integrate with official university databases or other data sources to gather the necessary information
+
+4. **University Database Integration**:
+   - Connect the AI assistant to official university databases to retrieve real-time course information
+   - Use this data to enhance the assistant's responses and provide more up-to-date and accurate information
+
+Remember, the core focus of this project is the implementation of Retrieval-Augmented Generation (RAG) to create an intelligent, context-aware AI assistant. By combining the strengths of large language models and curated data sources, you can deliver a unique and valuable application for students seeking information about professors and courses.
+
+Good luck with your project! Let me know if you have any further questions.

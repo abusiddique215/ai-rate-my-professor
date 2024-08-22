@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextField, Button, Box, Typography, Alert } from '@mui/material';
+import { TextField, Button, Box, Typography, Alert, CircularProgress, List, ListItem, ListItemText } from '@mui/material';
 
 export default function RecommendationForm() {
   const [preferences, setPreferences] = useState('');
@@ -65,15 +65,29 @@ export default function RecommendationForm() {
           {isLoading ? 'Getting Recommendations...' : 'Get Recommendations'}
         </Button>
       </form>
+      {isLoading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <CircularProgress />
+        </Box>
+      )}
       {error && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {error}
         </Alert>
       )}
       {recommendation && (
-        <Alert severity="success" sx={{ mt: 2 }}>
-          {recommendation}
-        </Alert>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle1" gutterBottom>
+            Recommendations:
+          </Typography>
+          <List>
+            {recommendation.split('\n').map((rec, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={rec} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
       )}
     </Box>
   );
