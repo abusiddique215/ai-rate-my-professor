@@ -1,51 +1,77 @@
 import { NextResponse } from 'next/server';
-import { PineconeClient } from '@pinecone-database/pinecone';
-import { Configuration, OpenAIApi } from 'openai';
+import { prisma } from '@/lib/db';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { rateLimit } from '@/lib/rate-limit';
+import { generateAIResponse, generateEmbedding } from '@/lib/openai';
+import { getPineconeClient } from '@/lib/pinecone';
 
-const pinecone = new PineconeClient();
-const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-export async function POST(req: Request) {
-  const { message } = await req.json();
+    const { success } = await rateLimit.limit(session.user.email!);
+    if (!success) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
 
-  // Implement RAG logic
-  // 1. Create embedding for user query
-  const userQueryEmbedding = await pinecone.createEmbedding(message);
+    const { messages } = await request.json();
 
-  // 2. Search Pinecone for relevant professor reviews
-  const searchResults = await pinecone.query(userQueryEmbedding, {
-    filter: {
-      match: {
-        type: 'professor_review',
+    // Generate embedding for the latest user message
+    const latestUserMessage = messages[messages.length - 1].content;
+    console.log('Generating embedding for:', latestUserMessage);
+    const embedding = await generateEmbedding(latestUserMessage);
+
+    // Store the embedding in Pinecone
+    console.log('Storing embedding in Pinecone');
+    const pinecone = await getPineconeClient();
+    const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
+    
+    await index.upsert({
+      upsertRequest: {
+        vectors: [
+          {
+            id: `${session.user.id}-${Date.now()}`,
+            values: embedding,
+            metadata: {
+              userId: session.user.id,
+              message: latestUserMessage,
+            },
+          },
+        ],
       },
-    },
-    includeMetadata: true,
-  });
+    });
 
-  // 3. Combine retrieved information with user query
-  const combinedInfo = searchResults.map((result) => ({
-    ...result.metadata,
-    review: result.data,
-  }));
+    // Generate AI response
+    console.log('Generating AI response');
+    const aiMessage = await generateAIResponse(messages);
 
-  // 4. Generate response using OpenAI
-  const aiResponse = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages: [
-      {
-        role: 'system',
-        content: 'You are a helpful assistant. Provide a response based on the user\'s query and the retrieved professor review information.',
+    // Save the conversation to the database
+    console.log('Saving conversation to database');
+    await prisma.conversation.create({
+      data: {
+        userId: session.user.id,
+        messages: {
+          create: [
+            ...messages.map((msg: any) => ({
+              role: msg.role,
+              content: msg.content,
+            })),
+            {
+              role: aiMessage.role,
+              content: aiMessage.content,
+            },
+          ],
+        },
       },
-      {
-        role: 'user',
-        content: message,
-      },
-      ...combinedInfo.map((info) => ({
-        role: 'system',
-        content: `Professor: ${info.name}\nRating: ${info.rating}\nReview: ${info.review}`,
-      })),
-    ],
-  });
+    });
 
-  return NextResponse.json({ role: 'assistant', content: aiResponse.choices[0].message.content });
+    return NextResponse.json(aiMessage);
+  } catch (error) {
+    console.error('API error:', error);
+    return NextResponse.json({ error: 'An error occurred while processing your request.', details: error.message }, { status: 500 });
+  }
 }

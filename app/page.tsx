@@ -1,7 +1,6 @@
 "use client";
 import ChatInterface from './components/ChatInterface';
-import { Box, Container } from "@mui/material";
-import styles from "./page.module.css";
+import { Box, Typography } from "@mui/material";
 
 export default function Home() {
   return (
@@ -14,9 +13,14 @@ export default function Home() {
       alignItems: 'center',
       padding: '2rem'
     }}>
-      <Container maxWidth="sm">
-        <ChatInterface />
-      </Container>
+      <Typography variant="h2" component="h1" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+        Rate My Professor Assistant
+      </Typography>
+      <Typography variant="subtitle1" sx={{ color: 'white', textAlign: 'center', mb: 4 }}>
+        University and bot chat!bot, meatined s proprest,<br />
+        book sant chatts to alde with!, your cod gotter.
+      </Typography>
+      <ChatInterface />
     </Box>
   );
 }
