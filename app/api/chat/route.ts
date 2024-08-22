@@ -1,60 +1,35 @@
 import { NextResponse } from 'next/server';
-import { generateChatResponse, generateEmbedding } from '../../lib/openai';
-import { queryProfessors } from '../../lib/professorData';
+import OpenAI from 'openai';
 
-export async function POST(request: Request) {
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  const userMessage = body.message;
+
   console.log('Chat API called');
-  
+  console.log('Received body:', body);
+
   try {
-    const body = await request.json();
-    console.log('Received body:', JSON.stringify(body, null, 2));
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: userMessage }],
+    });
 
-    let userMessage: string;
-    if (typeof body.message === 'string') {
-      userMessage = body.message;
-    } else if (Array.isArray(body.messages) && body.messages.length > 0) {
-      userMessage = body.messages[body.messages.length - 1].content;
-    } else {
-      console.error('Invalid request format');
-      return NextResponse.json({ error: 'Invalid request format. Expected "message" string or "messages" array.' }, { status: 400 });
-    }
+    const aiResponse = completion.choices[0].message.content;
+    console.log('AI response:', aiResponse);
 
-    console.log('User message:', userMessage);
-
-    console.log('Querying professors...');
-    const relevantProfessors = await queryProfessors(userMessage);
-    console.log('Relevant professors:', JSON.stringify(relevantProfessors, null, 2));
-
-    const context = relevantProfessors.map((prof: any) => 
-      `${prof.name} is a professor in the ${prof.department} department. ${prof.bio}`
-    ).join('\n\n');
-    console.log('Generated context:', context);
-
-    const aiMessages = [
-      { role: "system", content: "You are a helpful assistant that provides information about professors based on the given context. Only use the information provided in the context to answer questions." },
-      { role: "user", content: `Context:\n${context}\n\nQuestion: ${userMessage}` }
-    ];
-
-    console.log('Sending messages to OpenAI');
-    const aiResponse = await generateChatResponse(aiMessages);
-    console.log('AI response received:', aiResponse);
-
-    const responseMessages = [
-      { role: 'user', content: userMessage },
-      { role: 'assistant', content: aiResponse }
-    ];
-
-    console.log('Sending response:', JSON.stringify(responseMessages, null, 2));
-
-    return NextResponse.json({ messages: responseMessages });
-
-  } catch (error: any) {
-    console.error('Error in /api/chat:', error);
-    return NextResponse.json({ 
-      error: 'An error occurred', 
-      details: error.message, 
-      stack: error.stack,
-      name: error.name
-    }, { status: 500 });
+    return NextResponse.json([
+      { role: "user", content: userMessage },
+      { role: "assistant", content: aiResponse }
+    ]);
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json(
+      { error: 'An error occurred while processing your request.' },
+      { status: 500 }
+    );
   }
 }

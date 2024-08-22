@@ -38,16 +38,15 @@ export default function ChatInterface() {
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
-      if (data.message) {
-        setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: data.message }]);
+      if (Array.isArray(data) && data.length > 1) {
+        // Add only the assistant's message
+        setMessages((prevMessages) => [...prevMessages, data[1]]);
       } else {
-        console.error('Unexpected response format:', data);
-        setMessages((prevMessages) => [...prevMessages, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+        throw new Error('Unexpected response format');
       }
     } catch (error) {
       console.error('Error:', error);
