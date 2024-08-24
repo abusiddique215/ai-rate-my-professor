@@ -51,6 +51,9 @@ export default function ChatInterface() {
   return (
     <div className="w-full max-w-[600px]">
       <div className="relative w-full rounded-xl overflow-hidden" style={{ height: '600px' }}>
+        {/* BorderBeam component */}
+        <BorderBeam />
+
         {/* Chat interface */}
         <div className="absolute inset-[2px] bg-white rounded-xl overflow-hidden">
           <Paper 
@@ -143,9 +146,6 @@ export default function ChatInterface() {
             </Box>
           </Paper>
         </div>
-
-        {/* BorderBeam on top */}
-        <BorderBeam />
       </div>
     </div>
   );
